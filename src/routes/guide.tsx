@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
+import { typeClasses } from "@/lib/events";
 
 export const Route = createFileRoute("/guide")({
   component: GuidePage,

@@ -71,12 +71,12 @@ export function startOfWeek(d: Date): Date {
 }
 
 export function minutesOfDay(t: string): number {
-  const [h, m] = t.split(":").map(Number);
+  const [h = 0, m = 0] = t.split(":").map(Number);
   return h * 60 + m;
 }
 
 export function formatTime(t: string): string {
-  const [h, m] = t.split(":").map(Number);
+  const [h = 0, m = 0] = t.split(":").map(Number);
   const suffix = h >= 12 ? "PM" : "AM";
   const hh = ((h + 11) % 12) + 1;
   return `${hh}:${String(m).padStart(2, "0")} ${suffix}`;
@@ -153,7 +153,7 @@ export function untilLabel(event: CalEvent, date: Date): string {
   const now = new Date();
   const target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   if (!event.allDay) {
-    const [h, m] = event.time.split(":").map(Number);
+    const [h = 0, m = 0] = event.time.split(":").map(Number);
     target.setHours(h, m, 0, 0);
   }
   const diffMin = Math.round((target.getTime() - now.getTime()) / 60000);
@@ -173,7 +173,7 @@ const WEEKDAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export function weekdayShort(d: Date): string {
-  return WEEKDAYS[d.getDay()];
+  return WEEKDAYS[d.getDay()] ?? "";
 }
 
 export function monthDay(d: Date): string {
@@ -181,7 +181,7 @@ export function monthDay(d: Date): string {
 }
 
 export function monthName(d: Date): string {
-  return MONTHS[d.getMonth()];
+  return MONTHS[d.getMonth()] ?? "";
 }
 
 /** Literal class strings so Tailwind picks them up at build time. */
