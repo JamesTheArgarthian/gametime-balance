@@ -5,11 +5,13 @@ import {
   isoOf,
   sortEvents,
   typeClasses,
+  useEventsVersion,
 } from "@/lib/events";
 
 const DAY_HEADERS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
 export function WeekView({ weekStart }: { weekStart: Date }) {
+  useEventsVersion();
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
   const todayIso = isoOf(new Date());
 
