@@ -26,7 +26,7 @@ export function AddEventForm({ date, onDone }: { date: string; onDone: () => voi
           type,
           date: day,
           time: allDay ? "00:00" : time,
-          endTime: allDay ? undefined : endTime,
+          ...(allDay ? {} : { endTime }),
           location: location.trim() || "—",
           allDay,
         });
