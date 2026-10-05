@@ -3,6 +3,7 @@ import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { WeekView } from "@/components/week-view";
 import {
   activeOrNextEvent,
+  useEventsVersion,
   eventTypeMeta,
   formatTime,
   getUpcoming,
@@ -65,6 +66,7 @@ const GUIDE_TEASERS = [
 ];
 
 function Index() {
+  useEventsVersion();
   const weekStart = startOfWeek(new Date());
   const upcoming = getUpcoming(5);
   const focus = activeOrNextEvent();

@@ -2,8 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { WeekView } from "@/components/week-view";
+import { AddEventForm } from "@/components/add-event-form";
 import {
   addDays,
+  deleteEvent,
+  useEventsVersion,
   eventTypeMeta,
   formatTime,
   getEventsOn,
@@ -55,10 +58,12 @@ function monthMatrix(year: number, month: number): (Date | null)[][] {
 }
 
 function CalendarPage() {
+  useEventsVersion();
   const now = new Date();
   const [monthOffset, setMonthOffset] = useState(0);
   const [view, setView] = useState<"month" | "week">("month");
   const [weekOffset, setWeekOffset] = useState(0);
+  const [formDate, setFormDate] = useState<string | null>(null);
 
   const anchor = addDays(new Date(now.getFullYear(), now.getMonth(), 1), monthOffset * 30);
   const year = anchor.getFullYear();
@@ -184,8 +189,9 @@ function CalendarPage() {
                     return (
                       <div
                         key={i}
+                        onClick={() => setFormDate(isoOf(cell))}
                         className={
-                          "min-h-28 space-y-1 border-b border-r border-line/40 p-1.5 last:border-r-0 " +
+                          "min-h-28 cursor-pointer space-y-1 border-b border-r border-line/40 p-1.5 last:border-r-0 hover:bg-foreground/5 " +
                           (isToday ? "bg-primary/5" : "")
                         }
                       >
@@ -223,10 +229,27 @@ function CalendarPage() {
           </div>
 
           <div className="lg:col-span-4">
+            {formDate !== null ? (
+              <div className="mb-6">
+                <AddEventForm date={formDate} onDone={() => setFormDate(null)} />
+              </div>
+            ) : (
+              <button
+                onClick={() => setFormDate(todayIso)}
+                className="mb-6 w-full rounded-full bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground"
+              >
+                + Add event
+              </button>
+            )}
             <div className="mb-4 font-mono text-[11px] tracking-[0.3em] text-primary">
               (B) UP NEXT
             </div>
             <div className="space-y-2">
+              {upcoming.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  No events yet. Tap a day or "Add event" to start.
+                </p>
+              )}
               {upcoming.map(({ event, date }) => (
                 <div
                   key={event.id + isoOf(date)}
@@ -253,6 +276,13 @@ function CalendarPage() {
                   <div className="font-mono text-[10px] text-primary">
                     {untilLabel(event, date)}
                   </div>
+                  <button
+                    onClick={() => deleteEvent(event.id)}
+                    aria-label={"Delete " + event.title}
+                    className="px-1 text-muted-foreground hover:text-foreground"
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>

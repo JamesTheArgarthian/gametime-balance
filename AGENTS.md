@@ -11,4 +11,4 @@
 
 ## Architecture rules
 
-- ClearTime is frontend-only: all events come from the demo schedule in `src/lib/events.ts`. No backend/DB unless the user asks for saving real events — do not add Lovable Cloud on your own.
+- ClearTime is frontend-only: user-added events live in a browser-storage store in `src/lib/events.ts` (components call `useEventsVersion()` to re-render). No backend/DB unless the user asks for sign-in/sync — do not add Lovable Cloud on your own.

@@ -23,35 +23,59 @@ export interface CalEvent {
   date?: string;
 }
 
-const recurring: CalEvent[] = [
-  { id: "p-mon", title: "Team practice", type: "practice", time: "16:00", endTime: "18:00", location: "Field House", weekday: 1 },
-  { id: "s-mon", title: "Chemistry study block", type: "study", time: "19:30", endTime: "21:00", location: "Library, 2nd floor", weekday: 1 },
-  { id: "p-tue", title: "Team practice", type: "practice", time: "16:00", endTime: "18:00", location: "Field House", weekday: 2 },
-  { id: "m-tue", title: "Film review", type: "meeting", time: "18:30", endTime: "19:15", location: "Room 204", weekday: 2 },
-  { id: "p-wed", title: "Team practice", type: "practice", time: "16:00", endTime: "18:00", location: "Field House", weekday: 3 },
-  { id: "s-wed", title: "Calculus study group", type: "study", time: "19:00", endTime: "20:30", location: "Library, 2nd floor", weekday: 3 },
-  { id: "p-thu", title: "Team practice", type: "practice", time: "16:00", endTime: "17:30", location: "Field House", weekday: 4 },
-  { id: "s-thu", title: "English reading block", type: "study", time: "20:00", endTime: "21:00", location: "Dorm study lounge", weekday: 4 },
-  { id: "g-fri", title: "Home game", type: "game", time: "19:00", endTime: "21:00", location: "Main arena", weekday: 5 },
-  { id: "p-sat", title: "Skills session", type: "practice", time: "09:00", endTime: "10:30", location: "Field House", weekday: 6 },
-  { id: "s-sat", title: "Homework block", type: "study", time: "14:00", endTime: "16:00", location: "Library, 2nd floor", weekday: 6 },
-  { id: "r-sun", title: "Rest & recovery", type: "rest", time: "00:00", location: "—", weekday: 0, allDay: true },
-  { id: "m-sun", title: "Plan the week", type: "meeting", time: "17:30", endTime: "18:15", location: "Kitchen table", weekday: 0 },
-];
+import { useSyncExternalStore } from "react";
 
-const NOW = new Date();
-const dow = NOW.getDay();
-const nextDow = (target: number) => {
-  const off = (target - dow + 7) % 7;
-  return off === 0 ? 7 : off;
-};
+const STORAGE_KEY = "cleartime-events";
+let oneOffs: CalEvent[] = [];
+let version = 0;
+let loaded = false;
+const listeners = new Set<() => void>();
+const recurring: CalEvent[] = [];
 
-const oneOffs: CalEvent[] = [
-  { id: "exam", title: "Biology exam", type: "study", time: "09:00", endTime: "10:30", location: "Science Hall 204", date: isoOf(addDays(NOW, nextDow(3))) },
-  { id: "sat-prep", title: "SAT prep session", type: "study", time: "10:00", endTime: "12:00", location: "Learning center", date: isoOf(addDays(NOW, nextDow(6))) },
-  { id: "team-dinner", title: "Team pasta dinner", type: "meeting", time: "18:00", endTime: "19:30", location: "Cafeteria", date: isoOf(addDays(NOW, nextDow(4))) },
-  { id: "away-game", title: "Away game vs. Eastview", type: "game", time: "19:30", endTime: "21:30", location: "Eastview High", date: isoOf(addDays(NOW, nextDow(5) + 7)) },
-];
+function emit() {
+  version++;
+  listeners.forEach((l) => l());
+}
+
+function load() {
+  if (loaded || typeof window === "undefined") return;
+  loaded = true;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) oneOffs = JSON.parse(raw);
+  } catch {
+    oneOffs = [];
+  }
+  emit();
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(oneOffs));
+  emit();
+}
+
+export function addEvent(ev: Omit<CalEvent, "id">) {
+  oneOffs = [...oneOffs, { ...ev, id: crypto.randomUUID() }];
+  save();
+}
+
+export function deleteEvent(id: string) {
+  oneOffs = oneOffs.filter((e) => e.id !== id);
+  save();
+}
+
+/** Re-renders the caller whenever events change. */
+export function useEventsVersion(): number {
+  return useSyncExternalStore(
+    (cb) => {
+      listeners.add(cb);
+      queueMicrotask(load);
+      return () => listeners.delete(cb);
+    },
+    () => version,
+    () => 0,
+  );
+}
 
 export function addDays(d: Date, n: number): Date {
   const c = new Date(d.getFullYear(), d.getMonth(), d.getDate());
