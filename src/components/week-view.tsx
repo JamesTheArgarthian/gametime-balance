@@ -1,5 +1,6 @@
 import {
   addDays,
+  deleteEvent,
   formatTime,
   getEventsOn,
   isoOf,

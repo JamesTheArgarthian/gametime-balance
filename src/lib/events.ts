@@ -64,6 +64,10 @@ export function deleteEvent(id: string) {
   save();
 }
 
+export function getEventById(id: string): CalEvent | null {
+  return oneOffs.find((e) => e.id === id) ?? null;
+}
+
 /** Re-renders the caller whenever events change. */
 export function useEventsVersion(): number {
   return useSyncExternalStore(
