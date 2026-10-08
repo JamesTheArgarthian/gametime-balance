@@ -6,6 +6,7 @@ import { AddEventForm } from "@/components/add-event-form";
 import {
   addDays,
   deleteEvent,
+  getEventById,
   useEventsVersion,
   eventTypeMeta,
   formatTime,
@@ -64,6 +65,7 @@ function CalendarPage() {
   const [view, setView] = useState<"month" | "week">("month");
   const [weekOffset, setWeekOffset] = useState(0);
   const [formDate, setFormDate] = useState<string | null>(null);
+  const [detail, setDetail] = useState<{ id: string; date: Date } | null>(null);
 
   const anchor = addDays(new Date(now.getFullYear(), now.getMonth(), 1), monthOffset * 30);
   const year = anchor.getFullYear();
