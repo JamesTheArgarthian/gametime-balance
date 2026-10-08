@@ -1,20 +1,49 @@
-# GameTime Balance
+# App name
 
-Create an app that helps student athletes manage their time. It should include Info on how they can balance their time and a calendar to see upcoming events.
+Gametime-Balance
 
-This project was built with [Lovable](https://lovable.dev).
+## Who it's for
 
-## Build with Lovable
+My app helps student-athletes manage their time because students should be able to balance sports and school.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/0331732a-bda7-48eb-ac84-59bf19f5ca5b).
+## What it does
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+Gametime-Balance helps student athletes manage their time
 
-## Development
+## Built with
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Lovable
+
+## How to run it
+
+```bash
+npm install
+npm run dev
+```
+
+![My app running locally](screenshots/running-locally.png)
+
+## Update log
+
+### Update 1
+- **Feedback:** Nate wanted me to change some of the wording in the suggestions
+- **What I changed:** Some of the wording of the suggestions made by the AI
+- **Why:** So the suggestions are more user friendly
+
+### Update 2
+- **Feedback:** Kolby wanted to be able to add his events into the calendar
+- **What I changed:** Gave the user the abillity to add events to the calender
+- **Why:** Without this addition the app would be unusable
+
+### Update 3
+- **Feedback:** Adrian wanted to have the ability to remove events
+- **What I changed:** I added the ability to remove events
+- **Why:** If the user makes a mistake, they would be able to fix it now
+
+## The update I made by hand
+
+Nate wanting me to change some of the wording in the suggestions
+
 
 ```sh
 git clone <this-repository-url>
