@@ -206,7 +206,11 @@ function CalendarPage() {
                         {shown.map((ev) => (
                           <div
                             key={ev.id}
-                            className={"truncate rounded px-1.5 py-0.5 text-[10px] font-medium text-foreground " + typeClasses[ev.type].cell}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDetail({ id: ev.id, date: cell });
+                            }}
+                            className={"cursor-pointer truncate rounded px-1.5 py-0.5 text-[10px] font-medium text-foreground " + typeClasses[ev.type].cell}
                             title={ev.title}
                           >
                             {ev.allDay ? "All day · " : formatTime(ev.time) + " "}
