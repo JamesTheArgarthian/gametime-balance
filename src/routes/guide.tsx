@@ -81,7 +81,7 @@ const DAY_PLAN = [
 
 const WEEK_CHECKLIST = [
   "Sunday: map every practice, game and exam for the week",
-  "Place two 90-minute study blocks around each practice day",
+  "Place a 30-minute study block before or after each practice on a practice day",
   "Book at least one full rest day — and defend it",
   "Check next week's travel and tell your professors early",
   "Prep bags, meals and gear the night before",
