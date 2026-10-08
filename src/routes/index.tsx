@@ -208,7 +208,7 @@ function Index() {
                     {weekdayShort(date)}
                   </div>
                   <div className="flex-1">
-                    <div className="text-sm font-semibold text-foreground">
+                    <div className="truncate text-sm font-semibold text-foreground">
                       {event.title}
                     </div>
                     <div className="font-mono text-[10px] text-muted-foreground">
@@ -217,6 +217,13 @@ function Index() {
                         : formatTime(event.time) + " · " + event.location}
                     </div>
                   </div>
+                  <button
+                    onClick={() => deleteEvent(event.id)}
+                    aria-label={"Remove " + event.title}
+                    className="px-1 text-muted-foreground transition-colors hover:text-destructive"
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
