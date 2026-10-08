@@ -76,6 +76,7 @@ function CalendarPage() {
   const weekStart = addDays(startOfWeek(now), weekOffset * 7);
 
   const upcoming = getUpcoming(6);
+  const detailEvent = detail ? getEventById(detail.id) : null;
 
   return (
     <div className="relative min-h-screen overflow-hidden">
@@ -235,7 +236,54 @@ function CalendarPage() {
           </div>
 
           <div className="lg:col-span-4">
-            {formDate !== null ? (
+            {detail && detailEvent ? (
+              <div className="mb-6 rounded-2xl bg-foreground/5 p-5 ring-1 ring-foreground/10">
+                <div className="font-mono text-[11px] tracking-[0.2em] text-muted-foreground">
+                  EVENT
+                </div>
+                <div className="mt-2 font-display text-2xl leading-none text-foreground">
+                  {detailEvent.title}
+                </div>
+                <div className="mt-3 flex items-center gap-2 text-sm text-fog/80">
+                  <span
+                    className={"size-2 rounded-full " + typeClasses[detailEvent.type].dot}
+                  />
+                  {eventTypeMeta[detailEvent.type].label}
+                </div>
+                <div className="mt-3 space-y-1 font-mono text-[11px] text-muted-foreground">
+                  <div>
+                    {weekdayShort(detail.date) +
+                      ", " +
+                      monthName(detail.date) +
+                      " " +
+                      detail.date.getDate()}
+                  </div>
+                  <div>
+                    {detailEvent.allDay
+                      ? "All day"
+                      : detailEvent.endTime
+                        ? formatTime(detailEvent.time) + " – " + formatTime(detailEvent.endTime)
+                        : formatTime(detailEvent.time)}
+                  </div>
+                  <div>{detailEvent.location}</div>
+                </div>
+                <button
+                  onClick={() => {
+                    deleteEvent(detail.id);
+                    setDetail(null);
+                  }}
+                  className="mt-5 w-full rounded-full bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground transition-opacity hover:opacity-90"
+                >
+                  Remove event
+                </button>
+                <button
+                  onClick={() => setDetail(null)}
+                  className="mt-2 w-full rounded-full px-4 py-2 text-sm text-fog/80 ring-1 ring-foreground/15 transition-colors hover:text-foreground"
+                >
+                  Back
+                </button>
+              </div>
+            ) : formDate !== null ? (
               <div className="mb-6">
                 <AddEventForm date={formDate} onDone={() => setFormDate(null)} />
               </div>
