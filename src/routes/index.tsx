@@ -3,6 +3,7 @@ import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { WeekView } from "@/components/week-view";
 import {
   activeOrNextEvent,
+  deleteEvent,
   useEventsVersion,
   eventTypeMeta,
   formatTime,

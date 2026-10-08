@@ -58,14 +58,26 @@ export function WeekView({ weekStart }: { weekStart: Date }) {
               {events.map((ev) => (
                 <div
                   key={ev.id}
-                  className={"rounded-md p-2 " + typeClasses[ev.type].cell}
+                  className={
+                    "flex items-start justify-between gap-1 rounded-md p-2 " +
+                    typeClasses[ev.type].cell
+                  }
                 >
-                  <div className="text-[11px] font-semibold text-foreground">
-                    {ev.title}
+                  <div className="min-w-0">
+                    <div className="truncate text-[11px] font-semibold text-foreground">
+                      {ev.title}
+                    </div>
+                    <div className="font-mono text-[9px] text-fog/70">
+                      {ev.allDay ? "All day" : formatTime(ev.time)}
+                    </div>
                   </div>
-                  <div className="font-mono text-[9px] text-fog/70">
-                    {ev.allDay ? "All day" : formatTime(ev.time)}
-                  </div>
+                  <button
+                    onClick={() => deleteEvent(ev.id)}
+                    aria-label={"Remove " + ev.title}
+                    className="px-0.5 text-xs leading-none text-fog/70 transition-colors hover:text-destructive"
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
