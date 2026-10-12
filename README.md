@@ -1,6 +1,6 @@
 # App name
 
-Gametime-Balance
+ClearTime
 
 ## Who it's for
 
@@ -8,7 +8,7 @@ My app helps student-athletes manage their time because students should be able 
 
 ## What it does
 
-Gametime-Balance helps student athletes manage their time
+ClearTime helps student athletes manage their time
 
 ## Built with
 
