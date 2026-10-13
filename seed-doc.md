@@ -23,4 +23,3 @@ Google calender, Apple calender, Apple reminder, Physical planner
 # What I don't know yet
 
 If people will actually use the app and not just say they would.
-
