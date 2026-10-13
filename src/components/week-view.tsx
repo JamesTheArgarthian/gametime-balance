@@ -1,6 +1,6 @@
+import { RemoveTrigger } from "@/components/event-actions";
 import {
   addDays,
-  deleteEvent,
   formatTime,
   getEventsOn,
   isoOf,
@@ -71,13 +71,14 @@ export function WeekView({ weekStart }: { weekStart: Date }) {
                       {ev.allDay ? "All day" : formatTime(ev.time)}
                     </div>
                   </div>
-                  <button
-                    onClick={() => deleteEvent(ev.id)}
-                    aria-label={"Remove " + ev.title}
+                  <RemoveTrigger
+                    id={ev.id}
+                    date={day}
+                    ariaLabel={"Remove " + ev.title}
                     className="px-0.5 text-xs leading-none text-fog/70 transition-colors hover:text-destructive"
                   >
                     ×
-                  </button>
+                  </RemoveTrigger>
                 </div>
               ))}
             </div>

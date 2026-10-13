@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { addEvent, eventTypeMeta, type EventType } from "@/lib/events";
+import { addEvent, eventTypeMeta, type EventType, type RepeatFreq } from "@/lib/events";
+import { RepeatFields } from "@/components/event-actions";
 
 const TYPES = Object.keys(eventTypeMeta) as EventType[];
 const field =
@@ -13,6 +14,8 @@ export function AddEventForm({ date, onDone }: { date: string; onDone: () => voi
   const [endTime, setEndTime] = useState("17:00");
   const [location, setLocation] = useState("");
   const [allDay, setAllDay] = useState(false);
+  const [repeat, setRepeat] = useState<RepeatFreq | "none">("none");
+  const [until, setUntil] = useState("");
 
   useEffect(() => setDay(date), [date]);
 
@@ -29,9 +32,12 @@ export function AddEventForm({ date, onDone }: { date: string; onDone: () => voi
           ...(allDay ? {} : { endTime }),
           location: location.trim() || "—",
           allDay,
+          ...(repeat === "none" ? {} : { repeat, ...(until ? { until } : {}) }),
         });
         setTitle("");
         setLocation("");
+        setRepeat("none");
+        setUntil("");
         onDone();
       }}
       className="space-y-3 rounded-2xl bg-foreground/5 p-5 ring-1 ring-foreground/10"
@@ -64,6 +70,7 @@ export function AddEventForm({ date, onDone }: { date: string; onDone: () => voi
         </div>
       )}
       <input className={field} placeholder="Location (optional)" value={location} onChange={(e) => setLocation(e.target.value)} />
+      <RepeatFields repeat={repeat} until={until} onChange={(r, u) => { setRepeat(r); setUntil(u); }} />
       <div className="flex gap-2">
         <button type="submit" className="flex-1 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
           Save
