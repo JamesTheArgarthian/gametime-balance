@@ -120,7 +120,7 @@ export function deleteEvent(id: string) {
   save();
 }
 
-export function updateEvent(id: string, patch: Partial<CalEvent>) {
+export function updateEvent(id: string, patch: { [K in keyof CalEvent]?: CalEvent[K] | undefined }) {
   oneOffs = oneOffs.map((e) => (e.id === id ? { ...e, ...patch } : e));
   save();
 }
