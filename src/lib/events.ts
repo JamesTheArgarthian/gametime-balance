@@ -121,7 +121,7 @@ export function deleteEvent(id: string) {
 }
 
 export function updateEvent(id: string, patch: { [K in keyof CalEvent]?: CalEvent[K] | undefined }) {
-  oneOffs = oneOffs.map((e) => (e.id === id ? { ...e, ...patch } : e));
+  oneOffs = oneOffs.map((e) => (e.id === id ? ({ ...e, ...patch } as CalEvent) : e));
   save();
 }
 
