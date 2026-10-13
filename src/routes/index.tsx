@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { WeekView } from "@/components/week-view";
+import { RemoveTrigger } from "@/components/event-actions";
 import {
   activeOrNextEvent,
-  deleteEvent,
   useEventsVersion,
   eventTypeMeta,
   formatTime,
@@ -217,13 +217,14 @@ function Index() {
                         : formatTime(event.time) + " · " + event.location}
                     </div>
                   </div>
-                  <button
-                    onClick={() => deleteEvent(event.id)}
-                    aria-label={"Remove " + event.title}
+                  <RemoveTrigger
+                    id={event.id}
+                    date={date}
+                    ariaLabel={"Remove " + event.title}
                     className="px-1 text-muted-foreground transition-colors hover:text-destructive"
                   >
                     ×
-                  </button>
+                  </RemoveTrigger>
                 </div>
               ))}
             </div>

@@ -19,8 +19,64 @@ export interface CalEvent {
   allDay?: boolean;
   /** 0 = Sunday … 6 = Saturday, for recurring weekly events */
   weekday?: number;
-  /** ISO yyyy-mm-dd, for one-off events */
+  /** ISO yyyy-mm-dd, for one-off events (start date for repeating ones) */
   date?: string;
+  /** Repeat rule; absent = one-off */
+  repeat?: RepeatFreq;
+  /** Last ISO date (inclusive) a repeating event occurs */
+  until?: string;
+  /** ISO dates removed from a repeating series */
+  exceptions?: string[];
+}
+
+export type RepeatFreq = "daily" | "weekdays" | "weekly" | "biweekly" | "monthly";
+
+export const repeatLabels: Record<RepeatFreq | "none", string> = {
+  none: "Does not repeat",
+  daily: "Every day",
+  weekdays: "Every weekday (Mon–Fri)",
+  weekly: "Every week",
+  biweekly: "Every 2 weeks",
+  monthly: "Every month",
+};
+
+function parseIso(s: string): Date {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y!, (m ?? 1) - 1, d ?? 1);
+}
+
+/** Does this event occur on the given day? */
+export function occursOn(ev: CalEvent, day: Date): boolean {
+  if (!ev.date) return false;
+  const iso = isoOf(day);
+  if (!ev.repeat) return ev.date === iso;
+  if (iso < ev.date) return false;
+  if (ev.until && iso > ev.until) return false;
+  if (ev.exceptions?.includes(iso)) return false;
+  const start = parseIso(ev.date);
+  const diff = Math.round((day.getTime() - start.getTime()) / 86400000);
+  switch (ev.repeat) {
+    case "daily":
+      return true;
+    case "weekdays":
+      return day.getDay() >= 1 && day.getDay() <= 5;
+    case "weekly":
+      return diff % 7 === 0;
+    case "biweekly":
+      return diff % 14 === 0;
+    case "monthly":
+      return day.getDate() === start.getDate();
+  }
+}
+
+/** Occurrence dates of an event from `from`, up to `limit` items (scans ~2 years). */
+export function occurrences(ev: CalEvent, from: Date, limit = 60): Date[] {
+  const out: Date[] = [];
+  for (let i = 0; i < 730 && out.length < limit; i++) {
+    const d = addDays(from, i);
+    if (occursOn(ev, d)) out.push(d);
+  }
+  return out;
 }
 
 import { useSyncExternalStore } from "react";
@@ -62,6 +118,29 @@ export function addEvent(ev: Omit<CalEvent, "id">) {
 export function deleteEvent(id: string) {
   oneOffs = oneOffs.filter((e) => e.id !== id);
   save();
+}
+
+export function updateEvent(id: string, patch: { [K in keyof CalEvent]?: CalEvent[K] | undefined }) {
+  oneOffs = oneOffs.map((e) => (e.id === id ? ({ ...e, ...patch } as CalEvent) : e));
+  save();
+}
+
+/** Remove specific dates from a repeating series. */
+export function deleteOccurrences(id: string, dates: string[]) {
+  const ev = getEventById(id);
+  if (!ev) return;
+  if (!ev.repeat) return deleteEvent(id);
+  updateEvent(id, { exceptions: [...new Set([...(ev.exceptions ?? []), ...dates])] });
+  const after = getEventById(id);
+  if (after && occurrences(after, parseIso(after.date!), 1).length === 0) deleteEvent(id);
+}
+
+/** Remove every occurrence on or after `fromIso`. */
+export function deleteFrom(id: string, fromIso: string) {
+  const ev = getEventById(id);
+  if (!ev?.date) return;
+  if (fromIso <= ev.date) return deleteEvent(id);
+  updateEvent(id, { until: isoOf(addDays(parseIso(fromIso), -1)) });
 }
 
 export function getEventById(id: string): CalEvent | null {
@@ -119,11 +198,10 @@ export function sortEvents(events: CalEvent[]): CalEvent[] {
 }
 
 export function getEventsOn(date: Date): CalEvent[] {
-  const iso = isoOf(date);
   const wd = date.getDay();
   return [
     ...recurring.filter((e) => e.weekday === wd),
-    ...oneOffs.filter((e) => e.date === iso),
+    ...oneOffs.filter((e) => occursOn(e, date)),
   ];
 }
 

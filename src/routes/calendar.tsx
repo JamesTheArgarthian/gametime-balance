@@ -3,9 +3,9 @@ import { useState } from "react";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { WeekView } from "@/components/week-view";
 import { AddEventForm } from "@/components/add-event-form";
+import { RemoveTrigger, RepeatEditor } from "@/components/event-actions";
 import {
   addDays,
-  deleteEvent,
   getEventById,
   useEventsVersion,
   eventTypeMeta,
@@ -267,15 +267,15 @@ function CalendarPage() {
                   </div>
                   <div>{detailEvent.location}</div>
                 </div>
-                <button
-                  onClick={() => {
-                    deleteEvent(detail.id);
-                    setDetail(null);
-                  }}
+                <RepeatEditor id={detail.id} />
+                <RemoveTrigger
+                  id={detail.id}
+                  date={detail.date}
+                  onRemoved={() => setDetail(null)}
                   className="mt-5 w-full rounded-full bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground transition-opacity hover:opacity-90"
                 >
                   Remove event
-                </button>
+                </RemoveTrigger>
                 <button
                   onClick={() => setDetail(null)}
                   className="mt-2 w-full rounded-full px-4 py-2 text-sm text-fog/80 ring-1 ring-foreground/15 transition-colors hover:text-foreground"
@@ -330,13 +330,14 @@ function CalendarPage() {
                   <div className="font-mono text-[10px] text-primary">
                     {untilLabel(event, date)}
                   </div>
-                  <button
-                    onClick={() => deleteEvent(event.id)}
-                    aria-label={"Delete " + event.title}
+                  <RemoveTrigger
+                    id={event.id}
+                    date={date}
+                    ariaLabel={"Delete " + event.title}
                     className="px-1 text-muted-foreground hover:text-foreground"
                   >
                     ×
-                  </button>
+                  </RemoveTrigger>
                 </div>
               ))}
             </div>
